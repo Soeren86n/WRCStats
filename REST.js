@@ -83,7 +83,17 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
             }
         });
     });
-
+    router.get("/Drivers_Get",function(req,res){
+        var query = "CALL `Drivers_get` ();";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query"});
+            } else {
+                res.json(rows[0]);
+            }
+        });
+    });
     router.get("/Rallys_Get",function(req,res){
         var query = "SELECT rallyid, Rallys.name, startdate, enddate, Länder.Name as Country from Rallys LEFT JOIN Länder ON Rallys.landid = Länder.landid";
         query = mysql.format(query);
@@ -95,7 +105,6 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
             }
         });
     });
-
     router.get("/Stages_Get",function(req,res){
         var query = "SELECT Stages.rallyid, Rallys.name as Rallyname,  stageid, Stages.Name as Stagename, stagenumber, day, datetime, cancelled, länge from Stages LEFT JOIN Rallys ON Stages.rallyid = Rallys.rallyid";
         query = mysql.format(query);
@@ -108,7 +117,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
         });
     });
 
-
+/*
     router.get("/users/:user_id",function(req,res){
         var query = "SELECT * FROM ?? WHERE ??=?";
         var table = ["user_login","user_id",req.params.user_id];
@@ -145,6 +154,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
             }
         });
     });
+    */
 }
 
 module.exports = REST_ROUTER;
