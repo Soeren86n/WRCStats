@@ -35,6 +35,22 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
             }
         });
     });
+    router.post("/Cars_Insert",function(req,res){
+        var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
+            "SET @p1 = '"+req.body.name+"'; " +
+            "SET @p2 = '"+req.body.startdate+"'; " +
+            "SET @p3 = '"+req.body.enddate+"'; " +
+            "SET @p4 = '"+req.body.landid+"'; " +
+            "CALL `Rally_Insert` (@p0 , @p1 , @p2, @p3, @p4);";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query", throw: err});
+            } else {
+                res.json({"Error" : false, "Message" : rows[5]});
+            }
+        });
+    });
     router.post("/Stages_Insert",function(req,res){
         var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
             "SET @p1 = '"+req.body.cancelled+"'; " +
@@ -85,6 +101,17 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
     });
     router.get("/Drivers_Get",function(req,res){
         var query = "CALL `Drivers_get` ();";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query"});
+            } else {
+                res.json(rows[0]);
+            }
+        });
+    });
+    router.get("/Manufacturer_Get",function(req,res){
+        var query = "CALL `Manufacturer_get` ();";
         query = mysql.format(query);
         connection.query(query,function(err,rows){
             if(err) {
