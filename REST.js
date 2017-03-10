@@ -110,6 +110,29 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
             }
         });
     });
+    router.get("/CoDrivers_Get",function(req,res){
+        var query = "CALL `CoDrivers_get` ();";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query"});
+            } else {
+                res.json(rows[0]);
+            }
+        });
+    });
+    router.get("/Cars_Get/:year",function(req,res){
+        console.log(req.params.year);
+        var query = "SET @p0 = '"+req.params.year+"'; CALL `Cars_get` (@p0);";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query"});
+            } else {
+                res.json(rows[1]);
+            }
+        });
+    });
     router.get("/Manufacturer_Get",function(req,res){
         var query = "CALL `Manufacturer_get` ();";
         query = mysql.format(query);
