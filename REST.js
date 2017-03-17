@@ -1,3 +1,5 @@
+var Cars = { FahrerID : 0, CodriverID : 0, HerstellerID : 0, Startnumber : 0,  year : 0};
+
 var mysql = require("mysql");
 function REST_ROUTER(router,connection,md5) {
     var self = this;
@@ -36,10 +38,22 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
         });
     });
     router.post("/Cars_Insert",function(req,res){
-        
-        console.log(req);
-        console.log(req.body.y);
-        res.json({"Error" : false, "x" : req.body.x, "y" : req.body.y});
+        Cars = req.body.request;
+        var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
+            "SET @p1 = '"+Cars.FahrerID+"'; " +
+            "SET @p2 = '"+Cars.CodriverID+"'; " +
+            "SET @p3 = '"+Cars.HerstellerID+"'; " +
+            "SET @p4 = '"+Cars.Startnumber+"'; " +
+            "SET @p5 = '"+Cars.year+"'; " +
+            "CALL `Cars_Ins` (@p0 , @p1 , @p2, @p3, @p4, @p5);";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query", throw: err});
+            } else {
+                res.json({"Error" : false});
+            }
+        });
     });
     router.post("/Stages_Insert",function(req,res){
         var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
