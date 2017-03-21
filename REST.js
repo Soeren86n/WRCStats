@@ -1,4 +1,5 @@
 var Cars = { FahrerID : 0, CodriverID : 0, HerstellerID : 0, Startnumber : 0,  year : 0};
+var Driver = {  ID: 0, Firstname: '', Name: '', Country: 0};
 
 var mysql = require("mysql");
 function REST_ROUTER(router,connection,md5) {
@@ -36,6 +37,25 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
                 res.json({"Error" : true, "Message" : "Error executing MySQL query", throw: err});
             } else {
                 res.json(rows[6]);
+            }
+        });
+    });
+    router.post("/Driver_Insert",function(req,res){
+        Driver = req.body.request;
+        console.log(Driver);
+        var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
+            "SET @p1 = '"+Driver.Firstname+"'; " +
+            "SET @p2 = '"+Driver.Name+"'; " +
+            "SET @p3 = '"+Driver.Country+"'; " +
+            "CALL `Driver_Ins` (@p0 , @p1 , @p2, @p3);";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query", throw: err});
+                console.log(err);
+            } else {
+                console.log(rows[4]);
+                res.json(rows[4]);
             }
         });
     });
@@ -100,6 +120,20 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
             }
         });
     });
+    router.get("/Countrys_Get",function(req,res){
+        var query = "CALL `Country_get` ();";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query", throw: err});
+            } else {
+                res.json(rows[0]);
+            }
+        });
+    });
+
+
+
     router.get("/Rallys_Get",function(req,res){
         var query = "SELECT rallyid, Rallys.name, startdate, enddate, Länder.Name as Country from Rallys LEFT JOIN Länder ON Rallys.landid = Länder.landid";
         query = mysql.format(query);
@@ -111,8 +145,6 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
             }
         });
     });
-
-
     router.post("/Rally_Insert",function(req,res){
         var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
             "SET @p1 = '"+req.body.name+"'; " +
