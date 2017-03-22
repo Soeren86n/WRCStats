@@ -1,5 +1,6 @@
 var Cars = { FahrerID : 0, CodriverID : 0, HerstellerID : 0, Startnumber : 0,  year : 0};
 var Driver = {  ID: 0, Firstname: '', Name: '', Country: 0};
+var Manufacturer = { ID: 0, Name: ''};
 
 var mysql = require("mysql");
 function REST_ROUTER(router,connection,md5) {
@@ -42,12 +43,29 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
     });
     router.post("/Driver_Insert",function(req,res){
         Driver = req.body.request;
-        console.log(Driver);
         var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
             "SET @p1 = '"+Driver.Firstname+"'; " +
             "SET @p2 = '"+Driver.Name+"'; " +
             "SET @p3 = '"+Driver.Country+"'; " +
             "CALL `Driver_Ins` (@p0 , @p1 , @p2, @p3);";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query", throw: err});
+                console.log(err);
+            } else {
+                console.log(rows[4]);
+                res.json(rows[4]);
+            }
+        });
+    });
+    router.post("/CoDriver_Insert",function(req,res){
+        Driver = req.body.request;
+        var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
+            "SET @p1 = '"+Driver.Firstname+"'; " +
+            "SET @p2 = '"+Driver.Name+"'; " +
+            "SET @p3 = '"+Driver.Country+"'; " +
+            "CALL `CoDriver_Ins` (@p0 , @p1 , @p2, @p3);";
         query = mysql.format(query);
         connection.query(query,function(err,rows){
             if(err) {
@@ -73,6 +91,22 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
                 res.json({"Error" : true, "Message" : "Error executing MySQL query", throw: err});
             } else {
                 res.json(rows[3]);
+            }
+        });
+    });
+    router.post("/Manufacturer_Insert",function(req,res){
+        Manufacturer = req.body.request;
+        var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
+            "SET @p1 = '"+Manufacturer.Name+"'; " +
+            "CALL `Manufacturer_Ins` (@p0 , @p1);";
+        query = mysql.format(query);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query", throw: err});
+                console.log(err);
+            } else {
+                console.log(rows[2]);
+                res.json(rows[2]);
             }
         });
     });
