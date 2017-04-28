@@ -80,11 +80,11 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
     });
     router.post("/Car_Del",function(req,res){
         console.log(req.body.sessionid);
-        console.log(req.body.year);
-        console.log(req.body.startnumber);
+        console.log(req.body.caryear);
+        console.log(req.body.startnr);
         var query = "SET @p0 =  '"+req.body.sessionid+"'; " +
-            "SET @p1 = '"+req.body.year+"'; " +
-            "SET @p2 = '"+req.body.startnumber+"'; " +
+            "SET @p1 = '"+req.body.caryear+"'; " +
+            "SET @p2 = '"+req.body.startnr+"'; " +
             "CALL `Car_Del` (@p0 , @p1 , @p2);";
         query = mysql.format(query);
         connection.query(query,function(err,rows){
