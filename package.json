@@ -5,8 +5,8 @@
     "start": "node Server.js"
   },
   "dependencies": {
-    "body-parser": "^1.17.1",
-    "express": "^4.15.2",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
     "md5": "~2.2.1",
     "mysql": "~2.13.0"
   }
