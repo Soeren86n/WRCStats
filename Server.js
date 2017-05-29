@@ -1,18 +1,19 @@
-var express = require('express');
-var mysql = require('mysql');
-var bodyParser = require('body-parser');
-var md5 = require('MD5');
-var Rest = require('./REST.js');
-var app = express();
+const express = require('express');
+const mysql = require('mysql');
+const bodyParser = require('body-parser');
+const md5 = require('md5');
+const Rest = require('./REST.js');
+
+const app = express();
 
 function REST() {
-  var self = this;
+  const self = this;
   self.connectMysql();
 }
 
 REST.prototype.connectMysql = function () {
-  var self = this;
-  var pool = mysql.createPool({
+  const self = this;
+  const pool = mysql.createPool({
     connectionLimit: 100,
     host: 'localhost',
     user: 'simplsys',
@@ -21,7 +22,7 @@ REST.prototype.connectMysql = function () {
     multipleStatements: true,
     debug: false,
   });
-  pool.getConnection(function (err, connection) {
+  pool.getConnection((err, connection) => {
     if (err) {
       self.stop(err);
     } else {
@@ -31,12 +32,12 @@ REST.prototype.connectMysql = function () {
 };
 
 REST.prototype.configureExpress = function (connection) {
-  var self = this;
+  const self = this;
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
-  var router = express.Router();
-  router.use(function (req, res, next) {
+  const router = express.Router();
+  router.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
@@ -44,19 +45,19 @@ REST.prototype.configureExpress = function (connection) {
     next();
   });
   app.use('/api', router);
-  var Rest_Router = new Rest(router, connection, md5);
+  const RestRouter = new Rest(router, connection, md5);
   self.startServer();
 };
 
 REST.prototype.startServer = function () {
-  app.listen(3000, function () {
+  app.listen(3000, () => {
     console.log('All right ! I am alive at Port 3000.');
   });
 };
 
 REST.prototype.stop = function (err) {
-  console.log('ISSUE WITH MYSQL' + err);
+  console.log(`ISSUE WITH MYSQL ${err}`);
   process.exit(1);
 };
 
-new REST();
+const nRest = new REST();
